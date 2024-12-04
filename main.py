@@ -11,8 +11,8 @@ def count_tokens(text):
     tokens = encoding.encode(text)
     return len(tokens)
 
-# Função para processar diretório e dividir os arquivos Java
-def process_directory(directory, output_file_prefix, max_tokens_per_file=2000):
+# Função para processar diretório e dividir os arquivos com extensões especificadas
+def process_directory(directory, output_file_prefix, max_tokens_per_file=2000, extensions=('.java', '.html')):
     file_counter = 1
     current_tokens = 0
     current_output_file = f'{output_file_prefix}_{file_counter}.txt'
@@ -21,10 +21,10 @@ def process_directory(directory, output_file_prefix, max_tokens_per_file=2000):
     try:
         for root, _, files in os.walk(directory):
             for file in files:
-                if file.endswith('.java'):
+                if file.endswith(extensions):  # Verifica se o arquivo tem uma das extensões especificadas
                     file_path = os.path.join(root, file)
-                    with open(file_path, 'r', encoding='utf-8') as java_file:
-                        content = java_file.read()
+                    with open(file_path, 'r', encoding='utf-8') as input_file:
+                        content = input_file.read()
 
                         # Contar tokens do conteúdo do arquivo
                         content_tokens = count_tokens(content)
@@ -66,12 +66,13 @@ def process_directory(directory, output_file_prefix, max_tokens_per_file=2000):
         if not out_file.closed:
             out_file.close()
 
-    print(f'Arquivos Java processados e divididos em arquivos com prefixo {output_file_prefix}_*.txt.')
+    print(f'Arquivos processados e divididos em arquivos com prefixo {output_file_prefix}_*.txt.')
 
-# Caminho do diretório do seu projeto Java
+# Caminho do diretório do seu projeto
 if __name__ == '__main__':
-    directory_path = r'C:\Users\Usuario\IdeaProjects\Github\EngSoft2-Project3\src\main\java\br\com\catolicapb\project3\model'  # Caminho do diretório
+    directory_path = r'C:\Users\User\IdeaProjects'  # Caminho do diretório
     directory_path = fix_path(directory_path)  # Corrigir o caminho
     output_file_prefix = 'output'  # Prefixo para os arquivos de saída
     max_tokens_per_file = 4000  # Limite de tokens por arquivo para facilitar cópia no chat
-    process_directory(directory_path, output_file_prefix, max_tokens_per_file)
+    extensions_to_process = ('.java', '.html', '.css', '.js')  # Extensões de arquivos a serem processados
+    process_directory(directory_path, output_file_prefix, max_tokens_per_file, extensions_to_process)
